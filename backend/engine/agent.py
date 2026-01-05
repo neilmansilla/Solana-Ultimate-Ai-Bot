@@ -1,0 +1,62 @@
+from backend.tools.web_search import search_web
+from backend.tools.code_executor import execute_python_code
+from backend.tools.image_gen import generate_image
+from backend.models import ChatRequest
+from backend.engine.llm import get_llm_response
+
+async def process_request(request: ChatRequest) -> str:
+    """
+    Process the incoming chat request.
+    This is where tool selection and agentic logic will happen.
+    """
+    
+    # Construct messages list
+    messages = []
+    
+    # Add system prompt
+    messages.append({
+        "role": "system", 
+        "content": "You are the Ultimate AI Assistant. You are helpful and smart. Please ask the user which language they would like to speak."
+    })
+    
+    # Add history
+    for msg in request.history:
+        # Ensure history format is correct
+        if "role" in msg and "content" in msg:
+            messages.append(msg)
+            
+    # Add current message
+    messages.append({"role": "user", "content": request.message})
+    
+    # Basic Tool/Intent Router (Simple Keyword based for robustness across models)
+    # In a production system, we would use LLM function calling or a ReAct loop.
+    
+    msg_text = request.message.lower()
+    
+    # 1. Image Generation
+    if "generate image" in msg_text or "create an image" in msg_text or "draw " in msg_text:
+        # Extract prompt (simplistic)
+        prompt = request.message
+        return await generate_image(prompt)
+        
+    # 2. Web Search
+    if "search for" in msg_text or "search web" in msg_text or "google " in msg_text:
+        query = request.message.replace("search for", "").replace("search web", "").strip()
+        search_results = search_web(query)
+        # Feed results back to LLM to summarize
+        messages.append({"role": "system", "content": f"Search Results:\n{search_results}\n\nUse these results to answer the user."})
+        
+    # 3. Code Execution
+    if "run code" in msg_text or "execute python" in msg_text:
+        # Extract code block
+        import re
+        code_match = re.search(r"```python(.*?)```", request.message, re.DOTALL)
+        if code_match:
+            code = code_match.group(1).strip()
+            result = execute_python_code(code)
+            return f"Code Execution Result:\n```\n{result}\n```"
+            
+    # Get response from LLM
+    response = await get_llm_response(messages, model=request.model)
+    
+    return response
