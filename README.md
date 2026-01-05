@@ -67,7 +67,7 @@ We are so confident in our AI that we are paying for the API costs for you.
 ### 1. Download & Install & ONE-CLICK LAUNCH 🚀
 Forget complex terminal commands. Just run the universal launcher:
 ```bash
-git clone https://github.com/yourusername/solana-ultimate-ai-bot.git
+git clone https://github.com/neilmansilla/solana-ultimate-ai-bot.git
 cd solana-ultimate-ai-bot
 
 # Install Dependencies (One-Time Setup)
