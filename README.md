@@ -72,8 +72,6 @@ cd Solana-Ultimate-Ai-Bot
 
 # Install Dependencies (One-Time Setup)
 python3 -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cd frontend && npm install && cd ..
 python3 main.py
 ```
 
