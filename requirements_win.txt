@@ -1,0 +1,6 @@
+Pillow
+requests
+PyAutoGUI
+pycryptodome
+pywin32
+certifi
